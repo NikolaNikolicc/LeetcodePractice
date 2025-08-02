@@ -116,6 +116,13 @@ g++ -o solution Leetcode-problem-number.cpp
 ./solution
 ```
 
+or we can use clang
+```bash
+# Compile and run (without exe file generation)
+clang++ "Path-to-problem.cpp" && .\a.exe
+
+```
+
 #### Python Solutions
 ```bash
 # Navigate to the specific problem directory
