@@ -118,8 +118,11 @@ g++ -o solution Leetcode-problem-number.cpp
 
 or we can use clang
 ```bash
+# Navigate to the specific problem directory
+cd "C++/ASP Beginners/Arrays"
+
 # Compile and run (without exe file generation)
-clang++ "Path-to-problem.cpp" && .\a.exe
+clang++ Leetcode-problem-number.cpp && .\a.exe
 
 ```
 
