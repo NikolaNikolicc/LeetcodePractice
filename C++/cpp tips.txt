@@ -1,200 +1,976 @@
-#include <vector>
+# C++ Tips for LeetCode Problem Solving
 
+## 📋 Table of Contents
+1. [STL Containers](#stl-containers)
+   - [Vector](#vector)
+   - [Stack](#stack)
+   - [Queue & Deque](#queue--deque)
+   - [Unordered Map](#unordered-map)
+   - [Unordered Set](#unordered-set)
+   - [Map & Set (Ordered)](#map--set-ordered)
+   - [Priority Queue](#priority-queue)
+2. [String Operations](#string-operations)
+3. [Heap Operations](#heap-operations)
+4. [Advanced Techniques](#advanced-techniques)
+5. [Common LeetCode Patterns](#common-leetcode-patterns)
+6. [Quick Reference](#quick-reference)
+
+---
+
+## 📦 STL Containers
+
+### 🔹 Vector
+**Include**: `#include <vector>`
+
+```cpp
 std::vector<int> v;
 
-// Dodavanje elemenata
-v.push_back(10);       // Dodaje element na kraj
-v.emplace_back(20);    // Efikasnije dodavanje (C++11)
-v.insert(v.begin(), 5); // Dodaje element na početak
+// Adding elements
+v.push_back(10);        // Add element to end - O(1) amortized
+v.emplace_back(20);     // More efficient addition (C++11) - O(1) amortized
+v.insert(v.begin(), 5); // Insert at beginning - O(n)
 
-// Pristupanje elementima
-int first = v[0];      // Pristup preko indeksa (bez provere granica)
-int second = v.at(1);  // Pristup sa proverom granica (baca izuzetak)
-int last = v.back();   // Poslednji element
+// Accessing elements
+int first = v[0];       // Access by index (no bounds checking) - O(1)
+int second = v.at(1);   // Access with bounds checking (throws exception) - O(1)
+int last = v.back();    // Last element - O(1)
+int* front_ptr = v.data(); // Get pointer to underlying array - O(1)
 
-// Brisanje elemenata
-v.pop_back();          // Uklanja poslednji element
-v.erase(v.begin());    // Uklanja element na poziciji
-v.clear();             // Uklanja sve elemente
+// Removing elements
+v.pop_back();           // Remove last element - O(1)
+v.erase(v.begin());     // Remove element at position - O(n)
+v.erase(v.begin() + 2, v.begin() + 5); // Remove range - O(n)
+v.clear();              // Remove all elements - O(n)
 
-// Informacije
-bool empty = v.empty(); // Da li je vektor prazan
-size_t size = v.size(); // Broj elemenata
-size_t cap = v.capacity(); // Kapacitet (alocirana memorija)
+// Information
+bool empty = v.empty(); // Check if vector is empty - O(1)
+size_t size = v.size(); // Number of elements - O(1)
+size_t cap = v.capacity(); // Allocated memory capacity - O(1)
 
-// Promena veličine
-v.resize(100);         // Promeni veličinu na 100
-v.reserve(1000);       // Rezerviši prostor za 1000 elemenata
+// Size management
+v.resize(100);          // Change size to 100 - O(n)
+v.reserve(1000);        // Reserve space for 1000 elements - O(n)
+v.shrink_to_fit();      // Reduce capacity to fit size - O(n)
+
+// Initialization techniques
+vector<int> v1(10, 5);           // 10 elements, all set to 5
+vector<int> v2{1, 2, 3, 4, 5};   // Initialize with values
+vector<int> v3(other_vector);    // Copy constructor
+vector<int> v4(nums.begin() + 1, nums.begin() + 4); // From range
+```
+
+**💡 Performance Tips:**
+- Use `reserve()` when you know the approximate final size
+- `emplace_back()` is more efficient than `push_back()` for complex objects
+- Prefer `[]` for performance, `at()` for safety
 
 
+---
 
+### 📚 Stack
+**Include**: `#include <stack>`
 
-###################################################################################################################
-
-
-
-
-#include <stack>
-
+```cpp
 std::stack<int> s;
 
-// Dodavanje elemenata
-s.push(10);             // Dodaje element na vrh steka
-s.emplace(20);          // Efikasnije dodavanje (C++11)
+// Adding elements
+s.push(10);             // Add element to top - O(1)
+s.emplace(20);          // More efficient addition (C++11) - O(1)
 
-// Pristupanje elementima
-int top = s.top();      // Vraća element sa vrha steka (ne uklanja ga)
+// Accessing elements
+int top = s.top();      // Get top element (doesn't remove) - O(1)
 
-// Brisanje elemenata
-s.pop();                // Uklanja element sa vrha steka
+// Removing elements
+s.pop();                // Remove top element - O(1)
 
-// Informacije
-bool empty = s.empty(); // Da li je stek prazan
-size_t size = s.size(); // Broj elemenata na steku
+// Information
+bool empty = s.empty(); // Check if stack is empty - O(1)
+size_t size = s.size(); // Number of elements - O(1)
 
+// ⚠️ Note: No iterators available for stack
+```
 
+**💡 Common Use Cases:**
+- Expression evaluation and parentheses matching
+- Backtracking algorithms
+- Function call simulation
+- Depth-First Search (DFS) implementation
 
+---
 
-###################################################################################################################
+### 🚪 Queue & Deque
+**Include**: `#include <queue>` and `#include <deque>`
 
+```cpp
+// Regular Queue (FIFO)
+std::queue<int> q;
 
+// Adding elements
+q.push(10);             // Add to back - O(1)
+q.emplace(20);          // More efficient addition - O(1)
 
+// Accessing elements
+int front = q.front();  // Get front element - O(1)
+int back = q.back();    // Get back element - O(1)
 
-#include <unordered_map>
+// Removing elements
+q.pop();                // Remove front element - O(1)
 
-std::unordered_map<std::string, int> umap;
+// Information
+bool empty = q.empty(); // Check if empty - O(1)
+size_t size = q.size(); // Number of elements - O(1)
 
-// Dodavanje elemenata
-umap["jedan"] = 1;                // Dodaje par ("jedan", 1)
-umap.insert({"dva", 2});           // Drugi način dodavanja
-umap.emplace("tri", 3);           // Efikasnije dodavanje (C++11)
+// Deque (Double-ended queue)
+std::deque<int> dq;
 
-// Pristupanje elementima
-int value = umap["jedan"];         // Pristup preko ključa
-// Napomena: umap["nepostojeci"] će kreirati element sa ključem "nepostojeci" i vrednošću 0
+// Adding elements
+dq.push_front(5);       // Add to front - O(1)
+dq.push_back(10);       // Add to back - O(1)
+dq.emplace_front(3);    // Efficient front insertion - O(1)
+dq.emplace_back(15);    // Efficient back insertion - O(1)
 
-// Bezazleno proveravanje postojanja
-if (umap.find("dva") != umap.end()) {
-    // Ključ postoji
+// Accessing elements
+int front = dq.front(); // First element - O(1)
+int back = dq.back();   // Last element - O(1)
+int elem = dq[2];       // Random access - O(1)
+
+// Removing elements
+dq.pop_front();         // Remove first - O(1)
+dq.pop_back();          // Remove last - O(1)
+
+// Information
+bool empty = dq.empty();
+size_t size = dq.size();
+```
+
+**💡 Common Use Cases:**
+- **Queue**: BFS, task scheduling, level-order traversal
+- **Deque**: Sliding window maximum, palindrome checking, undo operations
+
+---
+
+### 🎯 Unordered Set
+**Include**: `#include <unordered_set>`
+
+```cpp
+std::unordered_set<int> uset;
+
+// Adding elements
+uset.insert(10);        // Insert element - O(1) average
+uset.emplace(20);       // More efficient insertion - O(1) average
+
+// Checking existence
+if (uset.find(10) != uset.end()) {
+    // Element exists
 }
 
-// Brisanje elemenata
-umap.erase("dva");                // Brisanje preko ključa
-umap.erase(umap.find("tri"));     // Brisanje preko iteratora
-umap.clear();                     // Brisanje svih elemenata
+if (uset.count(10)) {   // Returns 0 or 1
+    // Element exists
+}
 
-// Informacije
-bool empty = umap.empty();        // Da li je mapa prazna
-size_t size = umap.size();        // Broj elemenata
+// C++20 alternative
+if (uset.contains(10)) {
+    // Element exists
+}
 
-std::unordered_map<char, char> map = {{'k','v'}, {'a','b'}} // kao recnik u py
+// Removing elements
+uset.erase(10);         // Remove by value - O(1) average
+uset.erase(uset.find(20)); // Remove by iterator - O(1) average
+uset.clear();           // Remove all - O(n)
 
-umap.count(c) // proverava da li c postoji u kljucevima mape
+// Information
+bool empty = uset.empty();
+size_t size = uset.size();
 
+// Initialization
+std::unordered_set<int> uset = {1, 2, 3, 4, 5};
 
-###################################################################################################################
+// Iteration
+for (const auto& element : uset) {
+    // Process element
+}
+```
 
+**💡 Performance Notes:**
+- Perfect for fast lookups and duplicate checking
+- Average O(1) operations, worst case O(n)
+- Use when you only need to check existence, not count frequency
 
+---
 
+### 📊 Map & Set (Ordered)
+**Include**: `#include <map>` and `#include <set>`
 
-OSNOVNE OPERACIJE ZA PRIORITY QUEUE
-#include <queue> // Ne <stack>, priority_queue je u <queue>
+```cpp
+// Ordered Map (Red-Black Tree)
+std::map<int, string> omap;
 
-// Kreiranje priority_queue (max-heap po defaultu)
+// Adding elements
+omap[1] = "one";        // Insert/update - O(log n)
+omap.insert({2, "two"}); // Alternative insertion - O(log n)
+omap.emplace(3, "three"); // Efficient insertion - O(log n)
+
+// Accessing elements
+string val = omap[1];   // Access by key - O(log n)
+
+// Safe access
+auto it = omap.find(2);
+if (it != omap.end()) {
+    string value = it->second;
+}
+
+// Range operations
+auto lower = omap.lower_bound(2); // First element >= 2
+auto upper = omap.upper_bound(4); // First element > 4
+
+// Information
+bool empty = omap.empty();
+size_t size = omap.size();
+
+// Ordered Set
+std::set<int> oset;
+
+// Adding elements
+oset.insert(10);        // Insert element - O(log n)
+oset.emplace(20);       // Efficient insertion - O(log n)
+
+// Checking existence
+if (oset.find(10) != oset.end()) {
+    // Element exists
+}
+
+if (oset.count(10)) {   // Returns 0 or 1
+    // Element exists
+}
+
+// Range operations
+auto lower = oset.lower_bound(15); // First element >= 15
+auto upper = oset.upper_bound(25); // First element > 25
+
+// Removing elements
+oset.erase(10);         // Remove by value - O(log n)
+oset.erase(oset.find(20)); // Remove by iterator - O(log n)
+
+// Multiset (allows duplicates)
+std::multiset<int> mset = {1, 2, 2, 3, 3, 3};
+mset.insert(2);         // Now has three 2's
+int count = mset.count(2); // Returns 3
+```
+
+**💡 When to Use:**
+- **Map/Set**: When you need sorted order or range queries
+- **Multiset**: When you need to maintain duplicates in sorted order
+- **Performance**: O(log n) operations but guaranteed worst-case
+
+---
+
+### 🗺️ Unordered Map
+**Include**: `#include <unordered_map>`
+
+```cpp
+std::unordered_map<std::string, int> umap;
+
+// Adding elements
+umap["key"] = 1;                    // Insert/update - O(1) average
+umap.insert({"two", 2});            // Alternative insertion - O(1) average
+umap.emplace("three", 3);           // More efficient insertion (C++11) - O(1) average
+
+// Accessing elements
+int value = umap["key"];            // Access by key - O(1) average
+// ⚠️ Warning: umap["nonexistent"] creates element with default value!
+
+// Safe access methods
+if (umap.find("key") != umap.end()) {
+    // Key exists
+    int val = umap["key"];
+}
+
+// Count method (returns 0 or 1 for unordered_map)
+if (umap.count("key")) {
+    // Key exists - equivalent to find() != end()
+}
+
+// C++20 alternative (if available)
+if (umap.contains("key")) {
+    int val = umap["key"];
+}
+
+// Removing elements
+umap.erase("key");                  // Remove by key - O(1) average
+umap.erase(umap.find("key"));       // Remove by iterator - O(1) average
+umap.clear();                       // Remove all elements - O(n)
+
+// Information
+bool empty = umap.empty();          // Check if map is empty - O(1)
+size_t size = umap.size();          // Number of elements - O(1)
+
+// Initialization (like Python dictionary)
+std::unordered_map<char, char> map = {{'k','v'}, {'a','b'}};
+
+// Iteration
+for (const auto& [key, value] : umap) {  // C++17 structured binding
+    // Process key and value
+}
+
+for (auto it = umap.begin(); it != umap.end(); ++it) {
+    // Process it->first (key) and it->second (value)
+}
+```
+
+**💡 Performance Notes:**
+- Average O(1) operations, worst case O(n)
+- Use `std::map` if you need ordered keys
+- Use `find()` or `count()` to check existence before accessing
+---
+
+### 🔺 Priority Queue
+**Include**: `#include <queue>` (Note: NOT `<stack>`)
+
+```cpp
+// Max-heap (default behavior)
 std::priority_queue<int> max_heap;
 
-// Min-heap se može kreirati na sledeći način:
+// Min-heap creation
 std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap;
 
-// Dodavanje elemenata
-max_heap.push(10);
+// Adding elements
+max_heap.push(10);      // Insert element - O(log n)
 max_heap.push(30);
 max_heap.push(20);
-max_heap.emplace(15); // Efikasnije dodavanje (C++11)
+max_heap.emplace(15);   // More efficient insertion (C++11) - O(log n)
 
-// Pristupanje elementima
-int top_element = max_heap.top(); // Vraća najveći element (ne uklanja ga)
+// Accessing elements
+int top_element = max_heap.top(); // Get highest priority element - O(1)
 
-// Brisanje elemenata
-max_heap.pop(); // Uklanja najveći element
+// Removing elements
+max_heap.pop();         // Remove highest priority element - O(log n)
 
-// Informacije
-bool empty = max_heap.empty(); // Da li je heap prazan
-size_t size = max_heap.size(); // Broj elemenata u heap-u
+// Information
+bool empty = max_heap.empty(); // Check if heap is empty - O(1)
+size_t size = max_heap.size(); // Number of elements - O(1)
+```
 
+#### Custom Comparators for Priority Queue
 
-
-
-##################################################################################################################
-
+```cpp
+// Custom comparator for complex objects (min-heap based on distance from origin)
 auto comp = [](const vector<int>& a, const vector<int>& b) {
     return a[0]*a[0] + a[1]*a[1] > b[0]*b[0] + b[1]*b[1];
 };
 
-
 priority_queue<vector<int>, vector<vector<int>>, decltype(comp)> minHeap(comp);
-Creates a min-heap using our custom comparator
 
-vector<int>: Each element is a point (x,y)
+// Explanation:
+// - vector<int>: Each element type (point coordinates)
+// - vector<vector<int>>: Container type for the heap
+// - decltype(comp): Automatically deduces comparator type
+// - minHeap(comp): Initialize heap with custom comparator
+```
 
-vector<vector<int>>: Container type for the heap
+**💡 Comparator Rules:**
+- Return `true` if first argument should be considered **less priority**
+- For min-heap: return `a > b`
+- For max-heap: return `a < b` (default behavior)
 
-decltype(comp): Automatically gets the type of our comparator
+---
 
-minHeap(comp): Initializes the heap with our comparator
+## 🔤 String Operations
+**Include**: `#include <string>`
 
+```cpp
+std::string s = "Hello World";
 
-###################################################################################################################
+// Basic operations
+s.length();             // Get length - O(1)
+s.size();               // Same as length() - O(1)
+s.empty();              // Check if empty - O(1)
+s.clear();              // Clear string - O(n)
 
+// Accessing characters
+char c = s[0];          // Access by index - O(1)
+char c = s.at(0);       // Safe access with bounds checking - O(1)
+char first = s.front(); // First character - O(1)
+char last = s.back();   // Last character - O(1)
 
+// Modifying
+s.push_back('!');       // Add character to end - O(1) amortized
+s.pop_back();           // Remove last character - O(1)
+s.append(" C++");       // Append string - O(n)
+s += " Programming";    // Concatenate - O(n)
 
+// Substring operations
+string sub = s.substr(6, 5);    // From position 6, length 5 - O(n)
+string sub2 = s.substr(6);      // From position 6 to end - O(n)
 
-DIREKTNO KORISCENJE HEAP ALGORITAMA
-#include <vector>
-#include <algorithm>
+// Finding
+size_t pos = s.find("World");   // Find substring - O(n*m)
+size_t pos2 = s.find('o');      // Find character - O(n)
+size_t rpos = s.rfind('o');     // Find from end - O(n)
 
+if (pos != string::npos) {
+    // Found
+}
+
+// Replacing
+s.replace(6, 5, "C++");         // Replace 5 chars from pos 6 - O(n)
+
+// Case conversion (not built-in, but common pattern)
+transform(s.begin(), s.end(), s.begin(), ::tolower);  // To lowercase
+transform(s.begin(), s.end(), s.begin(), ::toupper);  // To uppercase
+
+// String to number conversions
+int num = stoi("123");          // String to int
+long lnum = stol("123456");     // String to long
+double dnum = stod("123.45");   // String to double
+
+// Number to string
+string str = to_string(123);    // Int to string
+string str2 = to_string(123.45); // Double to string
+
+// Useful string algorithms
+string s1 = "hello";
+string s2 = "world";
+sort(s1.begin(), s1.end());     // Sort characters in string
+reverse(s2.begin(), s2.end());  // Reverse string
+
+// Check if string is palindrome
+bool isPalindrome = equal(s.begin(), s.begin() + s.size()/2, s.rbegin());
+```
+
+**💡 String Tips:**
+- Use `string::npos` to check if find() failed
+- `substr()` creates a new string (expensive for large strings)
+- Consider `string_view` (C++17) for read-only string operations
+- Use `reserve()` if you know the final size
+
+---
+
+## 🔧 Heap Operations
+
+### Direct Heap Algorithms
+**Include**: `#include <algorithm>`
+
+```cpp
 std::vector<int> vec = {10, 30, 20, 15};
 
-// Pretvaranje vektora u max-heap
-std::make_heap(vec.begin(), vec.end());
+// Convert vector to max-heap
+std::make_heap(vec.begin(), vec.end());     // O(n)
 
-// Dodavanje elementa
+// Add element to heap
 vec.push_back(25);
-std::push_heap(vec.begin(), vec.end());
+std::push_heap(vec.begin(), vec.end());     // O(log n)
 
-// Uklanjanje najvećeg elementa
-std::pop_heap(vec.begin(), vec.end());
-vec.pop_back(); // Morate eksplicitno ukloniti element
+// Remove largest element
+std::pop_heap(vec.begin(), vec.end());      // O(log n)
+vec.pop_back(); // Must explicitly remove element
 
-// Provera da li je heap
-bool is_heap = std::is_heap(vec.begin(), vec.end());
+// Check if vector is a heap
+bool is_heap = std::is_heap(vec.begin(), vec.end()); // O(n)
 
-// Sortiranje heap-a (heap sort)
-std::sort_heap(vec.begin(), vec.end()); // Nakon ovoga više nije heap
+// Sort heap (heap sort)
+std::sort_heap(vec.begin(), vec.end());     // O(n log n)
+// ⚠️ After sort_heap, vector is no longer a heap!
 
+// Find first element that violates heap property
+auto it = std::is_heap_until(vec.begin(), vec.end());
+```
 
+**💡 When to Use:**
+- Use `priority_queue` for typical heap operations
+- Use direct algorithms when you need more control over the underlying container
 
+---
 
-###################################################################################################################
+## 🚀 Advanced Techniques
 
+### Vector Initialization & Manipulation
 
-
-
-// Inicijalizacija vektora elementima niza od zeljenih pozicija
-vector<Pair> L(pairs.begin() + s, pairs.begin() + m + 1);
-
+```cpp
+// Initialize 2D vector
 int ROWS = 2, COLS = 3;
-vector<vector<int>> visited(ROWS, vector<int>(COLS, 0));
+vector<vector<int>> matrix(ROWS, vector<int>(COLS, 0)); // 2x3 matrix filled with 0
 
+// Initialize vector from array range
+vector<int> nums = {1, 2, 3, 4, 5};
+vector<int> subset(nums.begin() + 1, nums.begin() + 4); // {2, 3, 4}
 
+// Initialize from another container (using your example)
+vector<Pair> L(pairs.begin() + s, pairs.begin() + m + 1);
+```
 
-#####################################################################################################################
+### Pair and Tuple Operations
 
+```cpp
+// Pair operations
+std::pair<int, string> p = {1, "hello"};
+std::pair<int, string> p2 = make_pair(2, "world");
 
+// Accessing pair elements
+int first = p.first;
+string second = p.second;
 
+// Comparison (lexicographic order)
+pair<int, int> p1 = {1, 2};
+pair<int, int> p2 = {1, 3};
+bool less = p1 < p2;    // true, compares first then second
+
+// Tuple operations (C++11)
+std::tuple<int, string, double> t = make_tuple(1, "hello", 3.14);
+std::tuple<int, string, double> t2 = {2, "world", 2.71};
+
+// Accessing tuple elements
+int val1 = get<0>(t);
+string val2 = get<1>(t);
+double val3 = get<2>(t);
+
+// Structured binding (C++17)
+auto [id, name, score] = t;
+
+// Tie for unpacking
+int x; string y; double z;
+tie(x, y, z) = t;
+```
+
+### Array Operations
+
+```cpp
+// C-style arrays (stack allocated)
+int arr[100];           // Fixed size array
+int arr2[5] = {1, 2, 3, 4, 5}; // Initialize with values
+
+// std::array (C++11) - better than C arrays
+std::array<int, 5> stdArr = {1, 2, 3, 4, 5};
+
+// Operations
+stdArr.size();          // Get size - O(1)
+stdArr.front();         // First element - O(1)
+stdArr.back();          // Last element - O(1)
+stdArr.fill(0);         // Fill with value - O(n)
+
+// Iterators work
+sort(stdArr.begin(), stdArr.end());
+
+// Bounds checking
+int val = stdArr.at(2); // Throws if out of bounds
+```
+
+### Bitset Operations
+
+```cpp
+#include <bitset>
+
+// Create bitset
+std::bitset<8> bs;              // 8 bits, all 0
+std::bitset<8> bs2("10110");    // From string
+std::bitset<8> bs3(42);         // From integer
+
+// Setting and checking bits
+bs.set(3);              // Set bit 3 to 1
+bs.set(5, true);        // Set bit 5 to 1
+bs.reset(3);            // Set bit 3 to 0
+bs.flip(2);             // Flip bit 2
+bs.flip();              // Flip all bits
+
+// Checking bits
+bool bit = bs[3];       // Check bit 3
+bool bit2 = bs.test(3); // Same as above
+
+// Information
+size_t count = bs.count();      // Number of 1s
+size_t size = bs.size();        // Total bits
+bool all = bs.all();            // All bits are 1?
+bool any = bs.any();            // Any bit is 1?
+bool none = bs.none();          // No bits are 1?
+
+// Conversion
+unsigned long num = bs.to_ulong();
+string str = bs.to_string();
+
+// Bitwise operations
+bitset<8> result = bs & bs2;    // AND
+bitset<8> result2 = bs | bs2;   // OR
+bitset<8> result3 = bs ^ bs2;   // XOR
+bitset<8> result4 = ~bs;        // NOT
+```
+
+### Efficient Duplicate Detection
+
+```cpp
 class Solution {
 public:
+    // Method 1: Using unordered_set (most efficient for general case)
     bool hasDuplicate(vector<int>& nums) {
         return unordered_set<int>(nums.begin(), nums.end()).size() != nums.size();
     }
+    
+    // Method 2: Early termination approach
+    bool hasDuplicate_v2(vector<int>& nums) {
+        unordered_set<int> seen;
+        for (int num : nums) {
+            if (seen.count(num)) return true;
+            seen.insert(num);
+        }
+        return false;
+    }
+    
+    // Method 3: Sorting approach (O(n log n) time, O(1) extra space)
+    bool hasDuplicate_v3(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] == nums[i-1]) return true;
+        }
+        return false;
+    }
+```
+
+### Matrix and Graph Representations
+
+```cpp
+// 2D Matrix operations
+vector<vector<int>> matrix(rows, vector<int>(cols, 0));
+
+// Directions for 4-directional movement
+vector<vector<int>> directions = {{-1,0}, {1,0}, {0,-1}, {0,1}}; // up, down, left, right
+vector<vector<int>> directions8 = {{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}}; // 8 directions
+
+// Check bounds
+auto inBounds = [&](int r, int c) {
+    return r >= 0 && r < rows && c >= 0 && c < cols;
 };
+
+// Adjacency list for graphs
+vector<vector<int>> adj(n); // n vertices
+adj[u].push_back(v);        // Add edge u -> v
+
+// Adjacency list with weights
+vector<vector<pair<int, int>>> wadj(n); // {neighbor, weight}
+wadj[u].push_back({v, weight});
+
+// Edge list representation
+vector<vector<int>> edges; // {{u, v, weight}, ...}
+edges.push_back({u, v, weight});
+```
+
+### Union-Find (Disjoint Set)
+
+```cpp
+class UnionFind {
+private:
+    vector<int> parent, rank;
+    
+public:
+    UnionFind(int n) : parent(n), rank(n, 0) {
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+    
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]); // Path compression
+        }
+        return parent[x];
+    }
+    
+    bool unite(int x, int y) {
+        int px = find(x), py = find(y);
+        if (px == py) return false;
+        
+        // Union by rank
+        if (rank[px] < rank[py]) {
+            parent[px] = py;
+        } else if (rank[px] > rank[py]) {
+            parent[py] = px;
+        } else {
+            parent[py] = px;
+            rank[px]++;
+        }
+        return true;
+    }
+    
+    bool connected(int x, int y) {
+        return find(x) == find(y);
+    }
+};
+```
+
+### Trie (Prefix Tree)
+
+```cpp
+class TrieNode {
+public:
+    vector<TrieNode*> children;
+    bool isEnd;
+    
+    TrieNode() : children(26, nullptr), isEnd(false) {}
+};
+
+class Trie {
+private:
+    TrieNode* root;
+    
+public:
+    Trie() {
+        root = new TrieNode();
+    }
+    
+    void insert(string word) {
+        TrieNode* curr = root;
+        for (char c : word) {
+            int idx = c - 'a';
+            if (!curr->children[idx]) {
+                curr->children[idx] = new TrieNode();
+            }
+            curr = curr->children[idx];
+        }
+        curr->isEnd = true;
+    }
+    
+    bool search(string word) {
+        TrieNode* curr = root;
+        for (char c : word) {
+            int idx = c - 'a';
+            if (!curr->children[idx]) {
+                return false;
+            }
+            curr = curr->children[idx];
+        }
+        return curr->isEnd;
+    }
+    
+    bool startsWith(string prefix) {
+        TrieNode* curr = root;
+        for (char c : prefix) {
+            int idx = c - 'a';
+            if (!curr->children[idx]) {
+                return false;
+            }
+            curr = curr->children[idx];
+        }
+        return true;
+    }
+};
+```
+
+---
+
+## 🎯 Common LeetCode Patterns
+
+### Two Pointers Technique
+```cpp
+// Classic two pointers (opposite ends)
+int left = 0, right = nums.size() - 1;
+while (left < right) {
+    int sum = nums[left] + nums[right];
+    if (sum == target) {
+        // Found pair
+        return {left, right};
+    } else if (sum < target) {
+        left++;
+    } else {
+        right--;
+    }
+}
+
+// Fast and slow pointers (Floyd's cycle detection)
+int slow = 0, fast = 0;
+while (fast < nums.size() && nums[fast] != -1) {
+    slow = nums[slow];
+    fast = nums[nums[fast]];
+    if (slow == fast) {
+        // Cycle detected
+        break;
+    }
+}
+```
+
+### Sliding Window Technique
+```cpp
+// Fixed size window
+int windowSum = 0;
+for (int i = 0; i < k; i++) {
+    windowSum += nums[i];
+}
+int maxSum = windowSum;
+
+for (int i = k; i < nums.size(); i++) {
+    windowSum = windowSum - nums[i - k] + nums[i];
+    maxSum = max(maxSum, windowSum);
+}
+
+// Variable size window
+int left = 0, maxLength = 0;
+unordered_set<char> window;
+
+for (int right = 0; right < s.length(); right++) {
+    while (window.count(s[right])) {
+        window.erase(s[left]);
+        left++;
+    }
+    window.insert(s[right]);
+    maxLength = max(maxLength, right - left + 1);
+}
+```
+
+### Hash Map Patterns
+```cpp
+// Frequency counting
+unordered_map<int, int> freq;
+for (int num : nums) {
+    freq[num]++;
+}
+
+// Two sum pattern
+unordered_map<int, int> seen;
+for (int i = 0; i < nums.size(); i++) {
+    int complement = target - nums[i];
+    if (seen.count(complement)) {
+        return {seen[complement], i};
+    }
+    seen[nums[i]] = i;
+}
+
+// Group anagrams pattern
+unordered_map<string, vector<string>> groups;
+for (string& str : strs) {
+    string key = str;
+    sort(key.begin(), key.end());
+    groups[key].push_back(str);
+}
+```
+
+### Priority Queue Patterns
+```cpp
+// Top K elements
+priority_queue<int, vector<int>, greater<int>> minHeap; // Min-heap of size k
+for (int num : nums) {
+    minHeap.push(num);
+    if (minHeap.size() > k) {
+        minHeap.pop();
+    }
+}
+
+// K closest points to origin
+auto comp = [](const vector<int>& a, const vector<int>& b) {
+    return a[0]*a[0] + a[1]*a[1] < b[0]*b[0] + b[1]*b[1];
+};
+priority_queue<vector<int>, vector<vector<int>>, decltype(comp)> maxHeap(comp);
+
+for (auto& point : points) {
+    maxHeap.push(point);
+    if (maxHeap.size() > k) {
+        maxHeap.pop();
+    }
+}
+```
+
+---
+
+## ⚡ Quick Reference
+
+### Essential Headers
+```cpp
+#include <vector>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <unordered_map>
+#include <unordered_set>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <bitset>
+#include <array>
+#include <tuple>
+```
+
+### Time Complexities
+| Operation | Vector | Stack | Queue | Deque | Unordered Map | Map | Unordered Set | Set | Priority Queue |
+|-----------|--------|-------|-------|-------|---------------|-----|---------------|-----|----------------|
+| Insert | O(1) amortized | O(1) | O(1) | O(1) | O(1) average | O(log n) | O(1) average | O(log n) | O(log n) |
+| Delete | O(1) end, O(n) middle | O(1) | O(1) | O(1) | O(1) average | O(log n) | O(1) average | O(log n) | O(log n) |
+| Access | O(1) | O(1) top only | O(1) front/back | O(1) | O(1) average | O(log n) | N/A | N/A | O(1) top only |
+| Search | O(n) | N/A | N/A | O(n) | O(1) average | O(log n) | O(1) average | O(log n) | N/A |
+
+### Space Complexities
+| Data Structure | Space Complexity | Notes |
+|----------------|------------------|-------|
+| Vector | O(n) | May have unused capacity |
+| Deque | O(n) | Block-based allocation |
+| Map/Set | O(n) | Red-black tree overhead |
+| Unordered Map/Set | O(n) | Hash table with buckets |
+| Priority Queue | O(n) | Usually vector-based |
+| Trie | O(ALPHABET_SIZE * N * M) | N = number of words, M = average length |
+| Union-Find | O(n) | With path compression |
+
+### Modern C++ Features
+```cpp
+// Auto type deduction
+auto it = container.begin();
+auto result = some_function();
+
+// Range-based for loop (C++11)
+for (const auto& element : container) {
+    // Process element
+}
+
+// Structured binding (C++17)
+for (const auto& [key, value] : map) {
+    // Process key and value
+}
+
+// Lambda functions
+auto comp = [](const Type& a, const Type& b) {
+    return a.value < b.value;
+};
+
+// Move semantics (C++11)
+vector<int> moved_vector = std::move(original_vector);
+```
+
+### Memory Management Tips
+- Use `reserve()` for vectors when size is known
+- Prefer `emplace` over `push` for complex objects
+- Use move semantics with `std::move()` when appropriate
+- Consider `shrink_to_fit()` to reduce memory usage
+- Use `const` references in range-based loops to avoid copies
+
+### Common Pitfalls to Avoid
+1. **Iterator Invalidation**: Modifying containers while iterating
+2. **Accessing Empty Containers**: Always check `empty()` before `front()`, `back()`, `top()`
+3. **Index Out of Bounds**: Use `at()` for bounds checking in debug mode
+4. **Map Access**: `map[key]` creates element if key doesn't exist
+5. **Priority Queue**: Remember it's max-heap by default
+6. **String Find**: Check against `string::npos` for failed searches
+7. **Integer Overflow**: Be careful with large numbers and operations
+8. **Signed vs Unsigned**: Watch out for comparisons between signed and unsigned types
+
+### Choosing the Right Data Structure
+```cpp
+// Need fast random access? -> vector, array
+// Need fast insertion/deletion at ends? -> deque
+// Need fast insertion/deletion anywhere? -> list (not covered here)
+// Need LIFO behavior? -> stack
+// Need FIFO behavior? -> queue
+// Need fast lookup/insertion/deletion? -> unordered_set/map
+// Need sorted order? -> set/map
+// Need to maintain order with duplicates? -> multiset/multimap
+// Need to find min/max quickly? -> priority_queue
+// Working with bits? -> bitset
+// Need to group elements? -> Union-Find
+// Working with strings/prefixes? -> Trie
+```
+
+### Algorithm Complexity Reminders
+- **Sorting**: O(n log n) - `sort()`, `stable_sort()`
+- **Binary Search**: O(log n) - `binary_search()`, `lower_bound()`, `upper_bound()`
+- **Hash Operations**: O(1) average, O(n) worst case
+- **Tree Operations**: O(log n) - map, set, priority_queue
+- **Graph Traversal**: O(V + E) - BFS, DFS
+- **Union-Find**: O(α(n)) amortized - with path compression and union by rank
+
+---
+
+*Happy coding! 🚀*

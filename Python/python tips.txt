@@ -1,101 +1,270 @@
-1) If you are using an array (statically allocated) you can use SOFT DELETE method.
-This method is based that we actualy don't delete element but simply put element that we don't want to use at the end of the array.
-In this way it resulted in reducing the time complexity from O(n) to O(1) by simply switching two elements insted of deleting element at certain position and then moving all remaining elements by 1.
+# Python Tips for LeetCode Problem Solving
 
-2) self.map = collections.defaultdict(list)
-This method is used to set value if the key isn't in the dictionary. For example:
-dict = collections.defaultdict(int)
-dict = {"a": 0}
-dict["b"] += 2
-Final result would look like 
-dict = {"a":0, "b":2}
+## 📋 Table of Contents
+1. [Array Optimization Techniques](#array-optimization)
+2. [Data Structures](#data-structures)
+3. [Algorithm Optimization](#algorithm-optimization)
+4. [Built-in Libraries](#built-in-libraries)
+5. [Memory Management](#memory-management)
+6. [Graph Theory](#graph-theory)
+7. [Bit Operations](#bit-operations)
+8. [Sorting Techniques](#sorting-techniques)
 
-When you initialize a defaultdict, the argument you pass must be a callable (like int, list, str, etc.), not a value like 1.
+---
 
-3) In order to count every occurance of element in python we can use Counter that will create hash map.
+## 🚀 Array Optimization
 
-4) dequeue() - structure in Python that represents queues
+### 1. Soft Delete Method
+**Concept**: Instead of actually deleting elements, move unwanted elements to the end of the array.
+**Benefit**: Reduces time complexity from O(n) to O(1) by swapping instead of shifting all elements.
 
-5) In order to reduce time complexity for recursion problems use MEMOIZATION (cache-ing) so time complexity will fall from O(2^n) to O(n)
+```python
+# Instead of: arr.pop(index)  # O(n)
+# Use: swap to end
+arr[index], arr[-1] = arr[-1], arr[index]  # O(1)
+```
 
-6) If we want to use Heap structure in Python we should implement the following class:
+---
+
+## 📊 Data Structures
+
+### 2. DefaultDict Usage
+**Purpose**: Automatically creates default values for missing keys.
+
+```python
+from collections import defaultdict
+
+# Creates empty list for missing keys
+my_map = defaultdict(list)
+
+# Creates 0 for missing keys
+counter = defaultdict(int)
+counter["missing_key"] += 1  # Works without KeyError
+
+# ⚠️ Important: Pass callable (int, list, str), not values (1, [], "")
+```
+
+### 3. Counter for Element Frequency
+**Usage**: Count occurrences of elements efficiently.
+
+```python
+from collections import Counter
+
+nums = [1, 2, 2, 3, 3, 3]
+count = Counter(nums)  # {1: 1, 2: 2, 3: 3}
+```
+
+### 4. Deque for Queue Operations
+**Note**: It's `deque`, not `dequeue`
+
+```python
+from collections import deque
+
+q = deque()
+q.append(value)      # Add to right
+q.appendleft(value)  # Add to left
+q.pop()              # Remove from right
+q.popleft()          # Remove from left
+```
+
+### 5. Heap with Custom Comparison
+**Problem**: Using custom objects in heaps
+
+```python
+import heapq
 
 class NodeWrapper:
     def __init__(self, node):
         self.node = node
-
-    // enables heapq module to compare elements
+    
+    # Enables heapq module to compare elements
     def __lt__(self, other):
         return self.node.val < other.node.val
 
-7) Usually sorting algorithms which have swap between elements which aren't neighbours are not stable
+# Usage
+heap = []
+heapq.heappush(heap, NodeWrapper(node))
+```
 
-8) math library doesn't need to be imported
+**Heap Operations:**
+```python
+import heapq
 
-9) If you are using math.ceil and math.floor methods and you have to integers, you firstly need to cast first number to float in order to get right return value 
+# Convert list to heap
+heapq.heapify(arr)
 
-ex.
+# Push and pop
+heapq.heappush(heap, value)
+min_val = heapq.heappop(heap)
 
+# Get n largest/smallest
+largest = heapq.nlargest(n, arr)
+smallest = heapq.nsmallest(n, arr)
+
+# 💡 Tip: For lists in heap, comparison uses 0th element
+heap = [(priority, data), ...]
+```
+
+---
+
+## ⚡ Algorithm Optimization
+
+### 6. Memoization for Recursion
+**Purpose**: Cache results to avoid recalculation
+**Benefit**: Reduces time complexity from O(2^n) to O(n)
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Alternative: Manual memoization
+memo = {}
+def fib_memo(n):
+    if n in memo:
+        return memo[n]
+    if n <= 1:
+        return n
+    memo[n] = fib_memo(n-1) + fib_memo(n-2)
+    return memo[n]
+```
+
+### 7. Dynamic Programming Approaches
+- **Top-down**: Memoization (recursive with caching)
+- **Bottom-up**: Iterative approach, often more space-efficient
+
+### 8. Sorting Stability
+**Important**: Algorithms that swap non-adjacent elements are usually **not stable**
+- Stable: Merge Sort, Bubble Sort, Insertion Sort
+- Unstable: Quick Sort, Heap Sort, Selection Sort
+
+---
+
+## 📚 Built-in Libraries
+
+### 9. Math Library
+**Note**: `math` library is built-in, no import needed in some environments
+
+```python
+import math  # Explicit import recommended
+
+# For integer division with ceiling
 a, b = 8, 5
-math.ceil(float(a) / b)
+result = math.ceil(a / b)  # Use a/b, not float(a)/b (Python 3 default)
 
-10) when we pass array as a function parameter in python they will be passed as a reference, not as a copy 
+# Common functions
+math.floor(x)
+math.ceil(x)
+math.sqrt(x)
+math.log(x)
+math.pow(x, y)
+```
 
-11) If we want to copy array in python we can do it as array[:] because array.copy() wouldn't be allowed everywhere
+---
 
-12) If heap element is list heap operations will be calculated relatively to 0th element of that list
+## 💾 Memory Management
 
-13) Analogy:
-    Tree->node <=> Graph->vertices
-    Tree->pointers that connect the nodes <=> Graph->edges
+### 10. Array Passing (Reference vs Copy)
+**Important**: Arrays are passed by reference, modifying the original
 
-14) Hash implementation:
-    - incrementing address (addressing)
-    - Linked list
+```python
+def modify_array(arr):
+    arr[0] = 999  # Modifies original array
 
-15) Graph implementation:
-    - Matrix
-    - Adjecency Matrix
-    - Adjecency List - we don't have to take care of edge cases
+# To pass a copy:
+modify_array(arr[:])     # Slice copy
+modify_array(arr.copy()) # Explicit copy
+modify_array(list(arr))  # List conversion copy
+```
 
-16) heapq operations
-    - heapq.heapify
-    - heapq.heappop(list)
-    - heapq.heappush(list, value)
-    - heapq.nlargest(list)
+### 11. Space Complexity Notes
+- **Tree DFS**: Space complexity = O(height of tree)
+- **BFS**: Space complexity = O(width of tree)
 
-17) deque operations
-    - q = collections.deque()
-    - q.append(value)
-    - q.popleft()
-    - q.pop()
+---
 
-18) we can optimize recursive solutions using memoization (also called cacheing or top down dynamic programming)
+## 🌐 Graph Theory
 
-19) top own dynamic programming could be simplified using bottom up dynamic programming, this solutions are often iterative
+### 12. Graph vs Tree Terminology
+| Tree | Graph |
+|------|-------|
+| Node | Vertex |
+| Edge/Pointer | Edge |
 
-20) bit operators in py:
-    - n = 1 & 1 # and
-    - n = 1 | 0 # or
-    - n = 1 ^ 0 # xor (1 ^ 0 = 1, 0 ^ 1 = 1, 1 ^ 1 = 0, 0 ^ 0 = 0)
-    - n = ~n # not (negation)
-    - n = n << 1 # shift left
-    - n = n >> 1 # shift right
+### 13. Hash Table Implementation Methods
+- **Open Addressing**: Linear probing, quadratic probing
+- **Chaining**: Using linked lists for collision resolution
 
-21) If we are sorting array and want to know on which position will go each element we do the following
+### 14. Graph Representation
+- **Adjacency Matrix**: O(V²) space, O(1) edge lookup
+- **Adjacency List**: O(V + E) space, O(degree) edge lookup
+- **Recommendation**: Use adjacency list (fewer edge cases)
 
+---
+
+## 🔢 Bit Operations
+
+### 15. Bitwise Operators
+```python
+# Basic operations
+a & b   # AND
+a | b   # OR  
+a ^ b   # XOR (exclusive or)
+~a      # NOT (bitwise complement)
+a << n  # Left shift (multiply by 2^n)
+a >> n  # Right shift (divide by 2^n)
+
+# XOR truth table
+# 1 ^ 0 = 1, 0 ^ 1 = 1, 1 ^ 1 = 0, 0 ^ 0 = 0
+
+# Common bit tricks
+x & 1           # Check if odd
+x & (x - 1)     # Remove rightmost set bit
+x & -x          # Get rightmost set bit
+```
+
+---
+
+## 🔄 Sorting Techniques
+
+### 16. Indirect Sorting (Sort by Custom Key)
+**Use case**: Sort indices based on array values
+
+```python
 capital = [17, 12, 13]
-
 n = len(capital)
-indices = list(range(n))
+indices = list(range(n))  # [0, 1, 2]
 
-print(indices)
+# Sort indices by corresponding values
 indices.sort(key=lambda i: capital[i])
-print(indices)
------------------------------------------
---------------- output ------------------
------------------------------------------
-[0, 1, 2]
-[1, 2, 0]
+print(indices)  # [1, 2, 0] (sorted by values: 12, 13, 17)
 
-# tree DFS traversal will have space complexity equally big as height of tree
+# Now indices[0] points to smallest value in capital
+```
+
+---
+
+## 💡 Quick Reference
+
+### Essential Imports
+```python
+from collections import defaultdict, deque, Counter
+from functools import lru_cache
+import heapq
+import math
+```
+
+### Time Complexity Reminders
+- Hash operations: O(1) average
+- Heap operations: O(log n)
+- Sorting: O(n log n)
+- Tree traversal: O(n)
+- Memoized recursion: Often O(n) instead of O(2^n)
+
+---
+
+*Happy coding! 🐍*
