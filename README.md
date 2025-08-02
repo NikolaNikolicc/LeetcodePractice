@@ -144,8 +144,8 @@ The repository contains solutions organized by:
 
 - Check `cpp tips.txt` for C++ specific coding tips and best practices
 - Check `python tips.txt` for Python-specific implementation notes
-- Each solution includes time and space complexity analysis
-- Test files are available for quick verification
+- Each solution includes time and space complexity analysis (TODO)
+- Test files are available for quick verification (TODO)
 
 ## 🔗 Useful Resources
 
