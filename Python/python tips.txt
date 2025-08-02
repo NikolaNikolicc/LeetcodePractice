@@ -3,12 +3,14 @@
 ## 📋 Table of Contents
 1. [Array Optimization Techniques](#array-optimization)
 2. [Data Structures](#data-structures)
-3. [Algorithm Optimization](#algorithm-optimization)
-4. [Built-in Libraries](#built-in-libraries)
-5. [Memory Management](#memory-management)
-6. [Graph Theory](#graph-theory)
-7. [Bit Operations](#bit-operations)
-8. [Sorting Techniques](#sorting-techniques)
+3. [Advanced Data Structures](#advanced-data-structures)
+4. [String Operations](#string-operations)
+5. [Algorithm Optimization](#algorithm-optimization)
+6. [Built-in Libraries](#built-in-libraries)
+7. [Memory Management](#memory-management)
+8. [Graph Theory](#graph-theory)
+9. [Bit Operations](#bit-operations)
+10. [Sorting Techniques](#sorting-techniques)
 
 ---
 
@@ -105,11 +107,310 @@ smallest = heapq.nsmallest(n, arr)
 heap = [(priority, data), ...]
 ```
 
+### 6. Set Operations
+**Usage**: Fast lookups, removing duplicates, set operations
+
+```python
+# Creating sets
+s1 = set([1, 2, 3, 4])
+s2 = {3, 4, 5, 6}  # Set literal
+s3 = set()  # Empty set (not {})
+
+# Adding and removing
+s1.add(5)           # Add element
+s1.update([6, 7])   # Add multiple elements
+s1.remove(1)        # Remove element (raises KeyError if not found)
+s1.discard(1)       # Remove element (no error if not found)
+elem = s1.pop()     # Remove arbitrary element
+
+# Set operations
+union = s1 | s2           # Union
+intersection = s1 & s2    # Intersection
+difference = s1 - s2      # Elements in s1 but not s2
+sym_diff = s1 ^ s2        # Symmetric difference
+
+# Checking membership
+if 3 in s1:  # O(1) average
+    print("Found")
+
+# Converting
+unique_list = list(set(original_list))  # Remove duplicates
+```
+
+### 7. Dictionary Operations
+**Advanced**: Beyond basic dict usage
+
+```python
+# Dictionary comprehensions
+squares = {x: x**2 for x in range(5)}  # {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+
+# Get with default
+value = d.get(key, default_value)  # Returns default if key not found
+
+# Update dictionaries
+d1.update(d2)  # Merge d2 into d1
+
+# Dictionary views
+keys = d.keys()      # Dict keys view
+values = d.values()  # Dict values view  
+items = d.items()    # Dict items view
+
+# Iterate through dictionary
+for key, value in d.items():
+    print(f"{key}: {value}")
+
+# Sort dictionary by key or value
+sorted_by_key = dict(sorted(d.items()))
+sorted_by_value = dict(sorted(d.items(), key=lambda x: x[1]))
+
+# Python 3.9+ merge operator
+d3 = d1 | d2  # Merge dictionaries
+```
+
+---
+
+## 🏗️ Advanced Data Structures
+
+### 8. Union-Find (Disjoint Set)
+**Usage**: Connected components, cycle detection
+
+```python
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+        self.components = n
+    
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # Path compression
+        return self.parent[x]
+    
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False
+        
+        # Union by rank
+        if self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px
+        if self.rank[px] == self.rank[py]:
+            self.rank[px] += 1
+        
+        self.components -= 1
+        return True
+    
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+
+# Usage
+uf = UnionFind(5)
+uf.union(0, 1)
+uf.union(2, 3)
+print(uf.connected(0, 1))  # True
+print(uf.components)       # 3
+```
+
+### 9. Trie (Prefix Tree)
+**Usage**: String matching, autocomplete, word games
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+    
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return node.is_end
+    
+    def starts_with(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True
+
+# Usage
+trie = Trie()
+trie.insert("apple")
+print(trie.search("app"))      # False
+print(trie.starts_with("app")) # True
+```
+
+### 10. Segment Tree
+**Usage**: Range queries and updates
+
+```python
+class SegmentTree:
+    def __init__(self, arr):
+        self.n = len(arr)
+        self.tree = [0] * (4 * self.n)
+        self.build(arr, 0, 0, self.n - 1)
+    
+    def build(self, arr, node, start, end):
+        if start == end:
+            self.tree[node] = arr[start]
+        else:
+            mid = (start + end) // 2
+            self.build(arr, 2*node+1, start, mid)
+            self.build(arr, 2*node+2, mid+1, end)
+            self.tree[node] = self.tree[2*node+1] + self.tree[2*node+2]
+    
+    def update(self, node, start, end, idx, val):
+        if start == end:
+            self.tree[node] = val
+        else:
+            mid = (start + end) // 2
+            if start <= idx <= mid:
+                self.update(2*node+1, start, mid, idx, val)
+            else:
+                self.update(2*node+2, mid+1, end, idx, val)
+            self.tree[node] = self.tree[2*node+1] + self.tree[2*node+2]
+    
+    def query(self, node, start, end, l, r):
+        if r < start or end < l:
+            return 0
+        if l <= start and end <= r:
+            return self.tree[node]
+        mid = (start + end) // 2
+        left_sum = self.query(2*node+1, start, mid, l, r)
+        right_sum = self.query(2*node+2, mid+1, end, l, r)
+        return left_sum + right_sum
+    
+    def update_value(self, idx, val):
+        self.update(0, 0, self.n-1, idx, val)
+    
+    def range_sum(self, l, r):
+        return self.query(0, 0, self.n-1, l, r)
+```
+
+### 11. Binary Indexed Tree (Fenwick Tree)
+**Usage**: Efficient prefix sums and updates
+
+```python
+class BIT:
+    def __init__(self, n):
+        self.n = n
+        self.tree = [0] * (n + 1)
+    
+    def update(self, i, delta):
+        while i <= self.n:
+            self.tree[i] += delta
+            i += i & (-i)  # Add last set bit
+    
+    def query(self, i):
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & (-i)  # Remove last set bit
+        return s
+    
+    def range_query(self, l, r):
+        return self.query(r) - self.query(l - 1)
+
+# Usage
+bit = BIT(5)
+bit.update(1, 5)  # Add 5 to index 1
+bit.update(3, 10) # Add 10 to index 3
+print(bit.range_query(1, 3))  # Sum from index 1 to 3
+```
+
+---
+
+## 🔤 String Operations
+
+### 12. String Manipulation
+**Common**: String processing techniques
+
+```python
+s = "Hello World"
+
+# Basic operations
+len(s)              # Length
+s.lower()           # Convert to lowercase
+s.upper()           # Convert to uppercase
+s.strip()           # Remove whitespace
+s.replace("o", "0") # Replace characters
+
+# Splitting and joining
+words = s.split()   # Split by whitespace: ['Hello', 'World']
+s.split(',')        # Split by comma
+''.join(['a', 'b']) # Join list to string: 'ab'
+
+# String formatting
+name, age = "Alice", 25
+formatted = f"Name: {name}, Age: {age}"  # f-strings (Python 3.6+)
+formatted = "Name: {}, Age: {}".format(name, age)  # format method
+
+# String validation
+s.isdigit()         # All digits?
+s.isalpha()         # All letters?
+s.isalnum()         # All alphanumeric?
+
+# Substring operations
+s[2:5]              # Slice: characters 2 to 4
+s[::-1]             # Reverse string
+'llo' in s          # Substring check
+
+# Character operations
+ord('A')            # ASCII value: 65
+chr(65)             # Character from ASCII: 'A'
+
+# String comparison
+s1 < s2             # Lexicographic comparison
+```
+
+### 13. Regular Expressions
+**Usage**: Pattern matching and text processing
+
+```python
+import re
+
+text = "Contact: john@email.com or call 123-456-7890"
+
+# Basic patterns
+emails = re.findall(r'\S+@\S+', text)  # Find emails
+phones = re.findall(r'\d{3}-\d{3}-\d{4}', text)  # Find phone numbers
+
+# Common regex operations
+re.search(r'pattern', text)    # Find first match
+re.findall(r'pattern', text)   # Find all matches
+re.sub(r'old', 'new', text)    # Replace matches
+re.split(r'pattern', text)     # Split by pattern
+
+# Useful patterns
+r'\d+'        # One or more digits
+r'\w+'        # One or more word characters
+r'\s+'        # One or more whitespace
+r'[a-zA-Z]+'  # One or more letters
+r'^start'     # Line starts with 'start'
+r'end$'       # Line ends with 'end'
+```
+
 ---
 
 ## ⚡ Algorithm Optimization
 
-### 6. Memoization for Recursion
+### 14. Memoization for Recursion
 **Purpose**: Cache results to avoid recalculation
 **Benefit**: Reduces time complexity from O(2^n) to O(n)
 
@@ -133,11 +434,77 @@ def fib_memo(n):
     return memo[n]
 ```
 
-### 7. Dynamic Programming Approaches
+### 15. Dynamic Programming Approaches
 - **Top-down**: Memoization (recursive with caching)
 - **Bottom-up**: Iterative approach, often more space-efficient
 
-### 8. Sorting Stability
+### 16. Common Algorithm Patterns
+
+```python
+# Two pointers technique
+def two_sum_sorted(arr, target):
+    left, right = 0, len(arr) - 1
+    while left < right:
+        current_sum = arr[left] + arr[right]
+        if current_sum == target:
+            return [left, right]
+        elif current_sum < target:
+            left += 1
+        else:
+            right -= 1
+    return []
+
+# Sliding window (fixed size)
+def max_sum_subarray(arr, k):
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+    
+    for i in range(k, len(arr)):
+        window_sum = window_sum - arr[i-k] + arr[i]
+        max_sum = max(max_sum, window_sum)
+    
+    return max_sum
+
+# Sliding window (variable size)
+def longest_substring_without_repeating(s):
+    char_set = set()
+    left = 0
+    max_length = 0
+    
+    for right in range(len(s)):
+        while s[right] in char_set:
+            char_set.remove(s[left])
+            left += 1
+        char_set.add(s[right])
+        max_length = max(max_length, right - left + 1)
+    
+    return max_length
+
+# Binary search
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+# DFS with memoization
+def dfs_with_memo(grid, i, j, memo):
+    if (i, j) in memo:
+        return memo[(i, j)]
+    
+    # Base cases and recursive calls here
+    result = 0  # Your logic here
+    memo[(i, j)] = result
+    return result
+```
+
+### 17. Sorting Stability
 **Important**: Algorithms that swap non-adjacent elements are usually **not stable**
 - Stable: Merge Sort, Bubble Sort, Insertion Sort
 - Unstable: Quick Sort, Heap Sort, Selection Sort
@@ -146,7 +513,7 @@ def fib_memo(n):
 
 ## 📚 Built-in Libraries
 
-### 9. Math Library
+### 18. Math Library
 **Note**: `math` library is built-in, no import needed in some environments
 
 ```python
@@ -164,11 +531,47 @@ math.log(x)
 math.pow(x, y)
 ```
 
+### 19. Additional Useful Libraries
+
+```python
+# itertools - powerful iteration tools
+from itertools import permutations, combinations, product, groupby
+
+# Generate all permutations
+perms = list(permutations([1, 2, 3]))  # [(1,2,3), (1,3,2), ...]
+
+# Generate combinations
+combs = list(combinations([1, 2, 3, 4], 2))  # [(1,2), (1,3), (1,4), ...]
+
+# Cartesian product
+prod = list(product([1, 2], ['a', 'b']))  # [(1,'a'), (1,'b'), (2,'a'), (2,'b')]
+
+# Group consecutive elements
+data = [1, 1, 2, 2, 2, 3]
+grouped = [(k, list(g)) for k, g in groupby(data)]  # [(1, [1, 1]), (2, [2, 2, 2]), (3, [3])]
+
+# bisect - binary search in sorted lists
+import bisect
+
+arr = [1, 3, 5, 7, 9]
+pos = bisect.bisect_left(arr, 5)   # Find insertion point: 2
+pos2 = bisect.bisect_right(arr, 5) # Find insertion point: 3
+bisect.insort(arr, 6)              # Insert in sorted order
+
+# random - random number generation
+import random
+
+random.randint(1, 10)      # Random integer between 1 and 10
+random.choice([1, 2, 3])   # Random choice from list
+random.shuffle(arr)        # Shuffle list in place
+random.sample([1,2,3,4], 2) # Random sample of size 2
+```
+
 ---
 
 ## 💾 Memory Management
 
-### 10. Array Passing (Reference vs Copy)
+### 20. Array Passing (Reference vs Copy)
 **Important**: Arrays are passed by reference, modifying the original
 
 ```python
@@ -181,34 +584,160 @@ modify_array(arr.copy()) # Explicit copy
 modify_array(list(arr))  # List conversion copy
 ```
 
-### 11. Space Complexity Notes
+### 21. Space Complexity Notes
 - **Tree DFS**: Space complexity = O(height of tree)
 - **BFS**: Space complexity = O(width of tree)
+
+### 22. Memory Optimization Tips
+
+```python
+# Use generators for large datasets
+def fibonacci_generator():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Use list comprehensions instead of loops (more memory efficient)
+squares = [x**2 for x in range(10)]  # Better than loop + append
+
+# Use enumerate instead of range(len())
+for i, value in enumerate(arr):  # Better than for i in range(len(arr))
+    print(f"Index {i}: {value}")
+
+# Use zip for parallel iteration
+names = ['Alice', 'Bob', 'Charlie']
+ages = [25, 30, 35]
+for name, age in zip(names, ages):
+    print(f"{name} is {age} years old")
+
+# Use sys.getsizeof() to check memory usage
+import sys
+print(sys.getsizeof([1, 2, 3, 4, 5]))  # Memory usage in bytes
+```
 
 ---
 
 ## 🌐 Graph Theory
 
-### 12. Graph vs Tree Terminology
+### 23. Graph vs Tree Terminology
 | Tree | Graph |
 |------|-------|
 | Node | Vertex |
 | Edge/Pointer | Edge |
 
-### 13. Hash Table Implementation Methods
+### 24. Hash Table Implementation Methods
 - **Open Addressing**: Linear probing, quadratic probing
 - **Chaining**: Using linked lists for collision resolution
 
-### 14. Graph Representation
+### 25. Graph Representation
 - **Adjacency Matrix**: O(V²) space, O(1) edge lookup
 - **Adjacency List**: O(V + E) space, O(degree) edge lookup
 - **Recommendation**: Use adjacency list (fewer edge cases)
+
+### 26. Graph Algorithms Implementation
+
+```python
+# BFS implementation
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    result = []
+    
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            visited.add(node)
+            result.append(node)
+            
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+    
+    return result
+
+# DFS implementation (recursive)
+def dfs_recursive(graph, node, visited=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(node)
+    result = [node]
+    
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            result.extend(dfs_recursive(graph, neighbor, visited))
+    
+    return result
+
+# DFS implementation (iterative)
+def dfs_iterative(graph, start):
+    visited = set()
+    stack = [start]
+    result = []
+    
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            result.append(node)
+            
+            # Add neighbors in reverse order for consistent traversal
+            for neighbor in reversed(graph[node]):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+    
+    return result
+
+# Dijkstra's shortest path
+import heapq
+
+def dijkstra(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    pq = [(0, start)]
+    
+    while pq:
+        current_dist, current = heapq.heappop(pq)
+        
+        if current_dist > distances[current]:
+            continue
+            
+        for neighbor, weight in graph[current]:
+            distance = current_dist + weight
+            
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(pq, (distance, neighbor))
+    
+    return distances
+
+# Topological sort (DFS-based)
+def topological_sort(graph):
+    visited = set()
+    stack = []
+    
+    def dfs(node):
+        visited.add(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                dfs(neighbor)
+        stack.append(node)
+    
+    for node in graph:
+        if node not in visited:
+            dfs(node)
+    
+    return stack[::-1]  # Reverse to get correct order
+```
 
 ---
 
 ## 🔢 Bit Operations
 
-### 15. Bitwise Operators
+### 27. Bitwise Operators
 ```python
 # Basic operations
 a & b   # AND
@@ -227,11 +756,69 @@ x & (x - 1)     # Remove rightmost set bit
 x & -x          # Get rightmost set bit
 ```
 
+### 28. Advanced Bit Manipulation
+
+```python
+# Count set bits (number of 1s)
+def count_bits(n):
+    count = 0
+    while n:
+        count += 1
+        n &= n - 1  # Remove rightmost set bit
+    return count
+
+# Alternative using built-in
+bin(n).count('1')  # Count 1s in binary representation
+
+# Check if power of 2
+def is_power_of_2(n):
+    return n > 0 and (n & (n - 1)) == 0
+
+# Swap two numbers without temp variable
+a, b = 5, 7
+a ^= b
+b ^= a
+a ^= b
+# Now a = 7, b = 5
+
+# Find single number (XOR property: a ^ a = 0, a ^ 0 = a)
+def single_number(nums):
+    result = 0
+    for num in nums:
+        result ^= num
+    return result
+
+# Generate all subsets using bit manipulation
+def generate_subsets(nums):
+    n = len(nums)
+    subsets = []
+    
+    for i in range(1 << n):  # 2^n possibilities
+        subset = []
+        for j in range(n):
+            if i & (1 << j):  # Check if j-th bit is set
+                subset.append(nums[j])
+        subsets.append(subset)
+    
+    return subsets
+
+# Bit masking for state representation
+def can_attend_meetings(intervals):
+    # Example: use bitmask to represent which time slots are occupied
+    mask = 0
+    for start, end in intervals:
+        for time in range(start, end):
+            if mask & (1 << time):  # Time slot already occupied
+                return False
+            mask |= (1 << time)  # Mark time slot as occupied
+    return True
+```
+
 ---
 
 ## 🔄 Sorting Techniques
 
-### 16. Indirect Sorting (Sort by Custom Key)
+### 29. Indirect Sorting (Sort by Custom Key)
 **Use case**: Sort indices based on array values
 
 ```python
@@ -246,6 +833,67 @@ print(indices)  # [1, 2, 0] (sorted by values: 12, 13, 17)
 # Now indices[0] points to smallest value in capital
 ```
 
+### 30. Advanced Sorting Techniques
+
+```python
+# Multi-key sorting
+students = [('Alice', 85), ('Bob', 90), ('Charlie', 85)]
+
+# Sort by grade (descending), then by name (ascending)
+students.sort(key=lambda x: (-x[1], x[0]))
+
+# Custom comparison function (Python 3.2+)
+from functools import cmp_to_key
+
+def compare(x, y):
+    # Return -1 if x < y, 0 if x == y, 1 if x > y
+    return (x > y) - (x < y)
+
+arr.sort(key=cmp_to_key(compare))
+
+# Stable vs Unstable sorting
+# Python's sort() and sorted() are stable (maintain relative order of equal elements)
+data = [(1, 'a'), (2, 'b'), (1, 'c')]
+sorted_data = sorted(data, key=lambda x: x[0])  # [(1, 'a'), (1, 'c'), (2, 'b')]
+
+# Counting sort for small range integers
+def counting_sort(arr, max_val):
+    count = [0] * (max_val + 1)
+    
+    # Count occurrences
+    for num in arr:
+        count[num] += 1
+    
+    # Reconstruct array
+    result = []
+    for i, cnt in enumerate(count):
+        result.extend([i] * cnt)
+    
+    return result
+
+# Bucket sort for uniformly distributed data
+def bucket_sort(arr):
+    if not arr:
+        return arr
+    
+    # Create buckets
+    max_val, min_val = max(arr), min(arr)
+    bucket_count = len(arr)
+    buckets = [[] for _ in range(bucket_count)]
+    
+    # Distribute elements into buckets
+    for num in arr:
+        bucket_idx = int((num - min_val) * bucket_count / (max_val - min_val + 1))
+        buckets[bucket_idx].append(num)
+    
+    # Sort each bucket and concatenate
+    result = []
+    for bucket in buckets:
+        result.extend(sorted(bucket))
+    
+    return result
+```
+
 ---
 
 ## 💡 Quick Reference
@@ -253,9 +901,62 @@ print(indices)  # [1, 2, 0] (sorted by values: 12, 13, 17)
 ### Essential Imports
 ```python
 from collections import defaultdict, deque, Counter
-from functools import lru_cache
+from functools import lru_cache, cmp_to_key
 import heapq
 import math
+import bisect
+import re
+from itertools import permutations, combinations, product, groupby
+```
+
+### Data Structure Complexity Comparison
+| Data Structure | Access | Search | Insertion | Deletion | Space |
+|----------------|--------|--------|-----------|----------|-------|
+| List | O(1) | O(n) | O(n) | O(n) | O(n) |
+| Set | N/A | O(1) avg | O(1) avg | O(1) avg | O(n) |
+| Dict | O(1) avg | O(1) avg | O(1) avg | O(1) avg | O(n) |
+| Deque | O(1) ends | O(n) | O(1) ends | O(1) ends | O(n) |
+| Heap | O(1) top | N/A | O(log n) | O(log n) | O(n) |
+| Trie | O(m) | O(m) | O(m) | O(m) | O(ALPHABET_SIZE * N * M) |
+| Union-Find | N/A | O(α(n)) | O(α(n)) | N/A | O(n) |
+
+### Algorithm Complexity Reminders
+- **Hash operations**: O(1) average, O(n) worst case
+- **Heap operations**: O(log n)
+- **Sorting**: O(n log n) for comparison-based, O(n+k) for counting sort
+- **Tree traversal**: O(n)
+- **Graph traversal**: O(V + E) for adjacency list
+- **Binary search**: O(log n)
+- **Memoized recursion**: Often O(n) instead of O(2^n)
+
+### Common Python Idioms
+```python
+# Swap variables
+a, b = b, a
+
+# Multiple assignment
+x, y, z = 1, 2, 3
+
+# Conditional expression (ternary operator)
+result = value1 if condition else value2
+
+# List flattening
+flat = [item for sublist in nested_list for item in sublist]
+
+# Dictionary key with default
+value = d.get(key, default)
+
+# Check if all/any elements satisfy condition
+all(x > 0 for x in numbers)
+any(x < 0 for x in numbers)
+
+# Enumerate with custom start
+for i, value in enumerate(items, start=1):
+    print(f"{i}: {value}")
+
+# Reverse iteration
+for item in reversed(items):
+    print(item)
 ```
 
 ### Time Complexity Reminders
