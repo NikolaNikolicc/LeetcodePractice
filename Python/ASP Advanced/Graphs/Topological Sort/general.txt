@@ -1,0 +1,3 @@
+Graph needs to be acyclic and directed. Graph don't need to be fully connected.
+
+We can solve problem with DFS and BFS.

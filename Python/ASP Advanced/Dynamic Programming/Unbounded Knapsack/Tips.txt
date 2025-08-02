@@ -1,0 +1,3 @@
+Firstly, we want to implement recursive solution.
+After that, we use memoization technique to find out space problem.
+When we figured it out, we want to find recurrent relation and to shrink space problem.

@@ -1,0 +1,101 @@
+1) If you are using an array (statically allocated) you can use SOFT DELETE method.
+This method is based that we actualy don't delete element but simply put element that we don't want to use at the end of the array.
+In this way it resulted in reducing the time complexity from O(n) to O(1) by simply switching two elements insted of deleting element at certain position and then moving all remaining elements by 1.
+
+2) self.map = collections.defaultdict(list)
+This method is used to set value if the key isn't in the dictionary. For example:
+dict = collections.defaultdict(int)
+dict = {"a": 0}
+dict["b"] += 2
+Final result would look like 
+dict = {"a":0, "b":2}
+
+When you initialize a defaultdict, the argument you pass must be a callable (like int, list, str, etc.), not a value like 1.
+
+3) In order to count every occurance of element in python we can use Counter that will create hash map.
+
+4) dequeue() - structure in Python that represents queues
+
+5) In order to reduce time complexity for recursion problems use MEMOIZATION (cache-ing) so time complexity will fall from O(2^n) to O(n)
+
+6) If we want to use Heap structure in Python we should implement the following class:
+
+class NodeWrapper:
+    def __init__(self, node):
+        self.node = node
+
+    // enables heapq module to compare elements
+    def __lt__(self, other):
+        return self.node.val < other.node.val
+
+7) Usually sorting algorithms which have swap between elements which aren't neighbours are not stable
+
+8) math library doesn't need to be imported
+
+9) If you are using math.ceil and math.floor methods and you have to integers, you firstly need to cast first number to float in order to get right return value 
+
+ex.
+
+a, b = 8, 5
+math.ceil(float(a) / b)
+
+10) when we pass array as a function parameter in python they will be passed as a reference, not as a copy 
+
+11) If we want to copy array in python we can do it as array[:] because array.copy() wouldn't be allowed everywhere
+
+12) If heap element is list heap operations will be calculated relatively to 0th element of that list
+
+13) Analogy:
+    Tree->node <=> Graph->vertices
+    Tree->pointers that connect the nodes <=> Graph->edges
+
+14) Hash implementation:
+    - incrementing address (addressing)
+    - Linked list
+
+15) Graph implementation:
+    - Matrix
+    - Adjecency Matrix
+    - Adjecency List - we don't have to take care of edge cases
+
+16) heapq operations
+    - heapq.heapify
+    - heapq.heappop(list)
+    - heapq.heappush(list, value)
+    - heapq.nlargest(list)
+
+17) deque operations
+    - q = collections.deque()
+    - q.append(value)
+    - q.popleft()
+    - q.pop()
+
+18) we can optimize recursive solutions using memoization (also called cacheing or top down dynamic programming)
+
+19) top own dynamic programming could be simplified using bottom up dynamic programming, this solutions are often iterative
+
+20) bit operators in py:
+    - n = 1 & 1 # and
+    - n = 1 | 0 # or
+    - n = 1 ^ 0 # xor (1 ^ 0 = 1, 0 ^ 1 = 1, 1 ^ 1 = 0, 0 ^ 0 = 0)
+    - n = ~n # not (negation)
+    - n = n << 1 # shift left
+    - n = n >> 1 # shift right
+
+21) If we are sorting array and want to know on which position will go each element we do the following
+
+capital = [17, 12, 13]
+
+n = len(capital)
+indices = list(range(n))
+
+print(indices)
+indices.sort(key=lambda i: capital[i])
+print(indices)
+-----------------------------------------
+--------------- output ------------------
+-----------------------------------------
+[0, 1, 2]
+[1, 2, 0]
+
+# tree DFS traversal will have space complexity equally big as height of tree

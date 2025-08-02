@@ -1,1 +1,4 @@
-.vscode/
+C++/.vscode/
+Python/venv/
+Python/quicktest.py
+Python/test.py
