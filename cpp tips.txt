@@ -1,0 +1,200 @@
+#include <vector>
+
+std::vector<int> v;
+
+// Dodavanje elemenata
+v.push_back(10);       // Dodaje element na kraj
+v.emplace_back(20);    // Efikasnije dodavanje (C++11)
+v.insert(v.begin(), 5); // Dodaje element na početak
+
+// Pristupanje elementima
+int first = v[0];      // Pristup preko indeksa (bez provere granica)
+int second = v.at(1);  // Pristup sa proverom granica (baca izuzetak)
+int last = v.back();   // Poslednji element
+
+// Brisanje elemenata
+v.pop_back();          // Uklanja poslednji element
+v.erase(v.begin());    // Uklanja element na poziciji
+v.clear();             // Uklanja sve elemente
+
+// Informacije
+bool empty = v.empty(); // Da li je vektor prazan
+size_t size = v.size(); // Broj elemenata
+size_t cap = v.capacity(); // Kapacitet (alocirana memorija)
+
+// Promena veličine
+v.resize(100);         // Promeni veličinu na 100
+v.reserve(1000);       // Rezerviši prostor za 1000 elemenata
+
+
+
+
+###################################################################################################################
+
+
+
+
+#include <stack>
+
+std::stack<int> s;
+
+// Dodavanje elemenata
+s.push(10);             // Dodaje element na vrh steka
+s.emplace(20);          // Efikasnije dodavanje (C++11)
+
+// Pristupanje elementima
+int top = s.top();      // Vraća element sa vrha steka (ne uklanja ga)
+
+// Brisanje elemenata
+s.pop();                // Uklanja element sa vrha steka
+
+// Informacije
+bool empty = s.empty(); // Da li je stek prazan
+size_t size = s.size(); // Broj elemenata na steku
+
+
+
+
+###################################################################################################################
+
+
+
+
+#include <unordered_map>
+
+std::unordered_map<std::string, int> umap;
+
+// Dodavanje elemenata
+umap["jedan"] = 1;                // Dodaje par ("jedan", 1)
+umap.insert({"dva", 2});           // Drugi način dodavanja
+umap.emplace("tri", 3);           // Efikasnije dodavanje (C++11)
+
+// Pristupanje elementima
+int value = umap["jedan"];         // Pristup preko ključa
+// Napomena: umap["nepostojeci"] će kreirati element sa ključem "nepostojeci" i vrednošću 0
+
+// Bezazleno proveravanje postojanja
+if (umap.find("dva") != umap.end()) {
+    // Ključ postoji
+}
+
+// Brisanje elemenata
+umap.erase("dva");                // Brisanje preko ključa
+umap.erase(umap.find("tri"));     // Brisanje preko iteratora
+umap.clear();                     // Brisanje svih elemenata
+
+// Informacije
+bool empty = umap.empty();        // Da li je mapa prazna
+size_t size = umap.size();        // Broj elemenata
+
+std::unordered_map<char, char> map = {{'k','v'}, {'a','b'}} // kao recnik u py
+
+umap.count(c) // proverava da li c postoji u kljucevima mape
+
+
+###################################################################################################################
+
+
+
+
+OSNOVNE OPERACIJE ZA PRIORITY QUEUE
+#include <queue> // Ne <stack>, priority_queue je u <queue>
+
+// Kreiranje priority_queue (max-heap po defaultu)
+std::priority_queue<int> max_heap;
+
+// Min-heap se može kreirati na sledeći način:
+std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap;
+
+// Dodavanje elemenata
+max_heap.push(10);
+max_heap.push(30);
+max_heap.push(20);
+max_heap.emplace(15); // Efikasnije dodavanje (C++11)
+
+// Pristupanje elementima
+int top_element = max_heap.top(); // Vraća najveći element (ne uklanja ga)
+
+// Brisanje elemenata
+max_heap.pop(); // Uklanja najveći element
+
+// Informacije
+bool empty = max_heap.empty(); // Da li je heap prazan
+size_t size = max_heap.size(); // Broj elemenata u heap-u
+
+
+
+
+##################################################################################################################
+
+auto comp = [](const vector<int>& a, const vector<int>& b) {
+    return a[0]*a[0] + a[1]*a[1] > b[0]*b[0] + b[1]*b[1];
+};
+
+
+priority_queue<vector<int>, vector<vector<int>>, decltype(comp)> minHeap(comp);
+Creates a min-heap using our custom comparator
+
+vector<int>: Each element is a point (x,y)
+
+vector<vector<int>>: Container type for the heap
+
+decltype(comp): Automatically gets the type of our comparator
+
+minHeap(comp): Initializes the heap with our comparator
+
+
+###################################################################################################################
+
+
+
+
+DIREKTNO KORISCENJE HEAP ALGORITAMA
+#include <vector>
+#include <algorithm>
+
+std::vector<int> vec = {10, 30, 20, 15};
+
+// Pretvaranje vektora u max-heap
+std::make_heap(vec.begin(), vec.end());
+
+// Dodavanje elementa
+vec.push_back(25);
+std::push_heap(vec.begin(), vec.end());
+
+// Uklanjanje najvećeg elementa
+std::pop_heap(vec.begin(), vec.end());
+vec.pop_back(); // Morate eksplicitno ukloniti element
+
+// Provera da li je heap
+bool is_heap = std::is_heap(vec.begin(), vec.end());
+
+// Sortiranje heap-a (heap sort)
+std::sort_heap(vec.begin(), vec.end()); // Nakon ovoga više nije heap
+
+
+
+
+###################################################################################################################
+
+
+
+
+// Inicijalizacija vektora elementima niza od zeljenih pozicija
+vector<Pair> L(pairs.begin() + s, pairs.begin() + m + 1);
+
+int ROWS = 2, COLS = 3;
+vector<vector<int>> visited(ROWS, vector<int>(COLS, 0));
+
+
+
+#####################################################################################################################
+
+
+
+class Solution {
+public:
+    bool hasDuplicate(vector<int>& nums) {
+        return unordered_set<int>(nums.begin(), nums.end()).size() != nums.size();
+    }
+};
