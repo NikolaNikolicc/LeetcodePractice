@@ -101,6 +101,7 @@ Python/
 - **Kadane's**: Find Minimal Spanning Tree (MST) using Union-Find
 - **Dijkstra's**: Find shortest path to any node in graph
 - **Segment Tree**: Optimize time complexity for query tasks in the list
+- **Topological Sort**: Traverse graph in topological order
 
 ## 🚀 Getting Started
 
