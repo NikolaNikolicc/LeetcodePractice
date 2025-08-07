@@ -84,7 +84,7 @@ Python/
 ### Algorithms
 - **Sorting**: Bubble, insertion, merge, quick, bucket sort
 - **Searching**: Binary search, search in rotated arrays
-- **Graph Algorithms**: BFS, DFS, Union-Find
+- **Graph Algorithms**: BFS, DFS, Union-Find, Dijkstra's, Prim's, Kadane's, Topological Sort, Segment Tree
 - **Dynamic Programming**: 1D and 2D DP problems
 - **Backtracking**: Subset generation, permutations
 - **Two Pointers**: Array and string problems
@@ -97,6 +97,10 @@ Python/
 - **Trie**: String matching and prefix problems
 - **Union-Find**: Disjoint set operations
 - **Two Heaps**: Median finding problems
+- **Prim's**: Find Minimal Spanning Tree (MST) using greedy search
+- **Kadane's**: Find Minimal Spanning Tree (MST) using Union-Find
+- **Dijkstra's**: Find shortest path to any node in graph
+- **Segment Tree**: Optimize time complexity for query tasks in the list
 
 ## 🚀 Getting Started
 
